@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -17,7 +17,7 @@ class User(UserMixin):
         self.username = username
         self.password_hash = generate_password_hash(password)
 
-# قاعدة بيانات بسيطة للمستخدمين (المساعدين)
+# قاعدة بيانات بسيطة للمستخدمين
 users = {
     'rachid': User(id=1, username='rachid', password='Rachid123@@'),
     'fanna': User(id=2, username='fanna', password='Rachid124@@'),
@@ -26,6 +26,9 @@ users = {
     'user3': User(id=5, username='user3', password='Rachid123@@Use23')
 }
 
+# قاعدة بيانات المشاركين
+participants = []
+
 @login_manager.user_loader
 def load_user(user_id):
     for user in users.values():
@@ -33,13 +36,65 @@ def load_user(user_id):
             return user
     return None
 
-# قائمة لتخزين المشاركين
-participants = []
-
 @app.route('/')
 @login_required
 def home():
     return render_template('home.html', participants=participants)
+
+@app.route('/register', methods=['POST'])
+@login_required
+def register():
+    ticket_number = request.form['ticket_number']
+    name = request.form['name']
+    national_id = request.form['national_id']
+    amount = request.form['amount']
+
+    # التحقق من عدم وجود تكرار في رقم التذكرة
+    if any(p['ticket_number'] == ticket_number for p in participants):
+        flash('رقم التذكرة موجود بالفعل!')
+        return redirect(url_for('home'))
+
+    participants.append({
+        'ticket_number': ticket_number,
+        'name': name,
+        'national_id': national_id,
+        'amount': amount,
+        'added_by': current_user.username
+    })
+
+    flash('تم التسجيل بنجاح!')
+    return redirect(url_for('home'))
+
+@app.route('/update/<ticket_number>', methods=['GET', 'POST'])
+@login_required
+def update(ticket_number):
+    # البحث عن المشارك باستخدام رقم التذكرة
+    participant = next((p for p in participants if p['ticket_number'] == ticket_number), None)
+
+    if not participant:
+        flash('المشارك غير موجود!')
+        return redirect(url_for('home'))
+
+    # التأكد من أن المساعد الحالي هو من قام بتسجيل هذا الرقم
+    if participant['added_by'] != current_user.username:
+        flash('لا يمكنك تعديل هذه البيانات لأنك لم تقم بتسجيلها!')
+        return redirect(url_for('home'))
+
+    if request.method == 'POST':
+        participant['name'] = request.form['name']
+        participant['national_id'] = request.form['national_id']
+        participant['amount'] = request.form['amount']
+        flash('تم التعديل بنجاح!')
+        return redirect(url_for('home'))
+
+    return render_template('update.html', participant=participant)
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('تم تسجيل الخروج بنجاح!')
+    return redirect(url_for('login'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -54,59 +109,6 @@ def login():
         else:
             flash('اسم المستخدم أو كلمة المرور غير صحيحة')
     return render_template('login.html')
-
-@app.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    flash('تم تسجيل الخروج بنجاح!')
-    return redirect(url_for('login'))
-
-@app.route('/register', methods=['POST'])
-@login_required
-def register():
-    # التحقق من المدخلات
-    ticket_number = request.form['ticket_number']
-    name = request.form['name']
-    email = request.form['email']
-    amount = request.form['amount']
-
-    # التحقق إذا كان رقم التذكرة موجودًا مسبقًا
-    if any(p['ticket_number'] == ticket_number for p in participants):
-        flash('رقم التذكرة موجود بالفعل')
-        return redirect(url_for('home'))
-
-    # إضافة الشخص إلى قائمة المشاركين
-    participants.append({
-        'ticket_number': ticket_number,
-        'name': name,
-        'email': email,
-        'amount': amount,
-        'added_by': current_user.username  # إضافة من قام بالتسجيل
-    })
-
-    flash('تم تسجيل الشخص بنجاح!')
-    return redirect(url_for('home'))
-
-@app.route('/update/<ticket_number>', methods=['GET', 'POST'])
-@login_required
-def update(ticket_number):
-    # العثور على المشارك بناءً على رقم التذكرة
-    participant = next((p for p in participants if p['ticket_number'] == ticket_number), None)
-    
-    if participant and current_user.username != participant['added_by']:
-        flash('لا يمكنك تعديل هذه التذكرة لأنها لم تُسجل بواسطة حسابك.')
-        return redirect(url_for('home'))
-
-    if request.method == 'POST':
-        # تعديل البيانات إذا كان النموذج صحيحًا
-        participant['name'] = request.form['name']
-        participant['email'] = request.form['email']
-        participant['amount'] = request.form['amount']
-        flash('تم تعديل التذكرة بنجاح!')
-        return redirect(url_for('home'))
-
-    return render_template('update.html', participant=participant)
 
 if __name__ == '__main__':
     app.run(debug=True)
