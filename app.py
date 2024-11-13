@@ -1,6 +1,8 @@
 from flask import Flask, render_template, redirect, url_for, request, flash, jsonify
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
+import pandas as pd
+import openpyxl
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
@@ -17,8 +19,17 @@ class User(UserMixin):
         self.username = username
         self.password_hash = generate_password_hash(password)
 
-# قاعدة بيانات بسيطة للمستخدمين
-users = {'admin': User(id=1, username='admin', password='password')}
+# قاعدة بيانات المستخدمين مع المستخدمين الجدد
+users = {
+    'rachid': User(id=1, username='rachid', password='Rachid123@@'),
+    'fanna': User(id=2, username='fanna', password='Rachid124@@'),
+    'user1': User(id=3, username='user1', password='Rachid123@@22'),
+    'user2': User(id=4, username='user2', password='Rachid123@@33'),
+    'user3': User(id=5, username='user3', password='Rachid123@@Use23')
+}
+
+# قائمة لتخزين المشاركين
+participants = []
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -27,11 +38,9 @@ def load_user(user_id):
             return user
     return None
 
-# قائمة لتخزين المشاركين
-participants = []
-
 @app.route('/')
 def home():
+    # عرض الصفحة الرئيسية مع عرض المشاركين المسجلين
     return render_template('home.html', participants=participants)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -61,59 +70,60 @@ def logout():
     return redirect(url_for('login'))
 
 @app.route('/register', methods=['POST'])
-@login_required
 def register():
     # الحصول على البيانات من النموذج
     name = request.form['name']
-    national_id = request.form['national_id']
+    id_card = request.form['id_card']
     ticket_number = request.form['ticket_number']
     amount = request.form['amount']
 
-    # التحقق من أن جميع الحقول مملوءة
-    if not name or not national_id or not ticket_number or not amount:
-        flash('جميع الحقول يجب أن تكون مملوءة!')
+    # التحقق من أن جميع الحقول تم ملؤها
+    if not name or not id_card or not ticket_number or not amount:
+        flash('جميع الحقول مطلوبة!')
         return redirect(url_for('home'))
 
     # التحقق من عدم تكرار رقم التذكرة
     for participant in participants:
         if participant['ticket_number'] == ticket_number:
-            flash('رقم التذكرة مكرر! يرجى إدخال رقم تذكرة مختلف.')
+            flash('رقم التذكرة موجود بالفعل!')
             return redirect(url_for('home'))
 
     # إضافة الشخص إلى قائمة المشاركين
-    participants.append({'name': name, 'national_id': national_id, 'ticket_number': ticket_number, 'amount': amount})
+    participants.append({
+        'name': name,
+        'id_card': id_card,
+        'ticket_number': ticket_number,
+        'amount': amount
+    })
 
     # إعادة تحميل الصفحة الرئيسية بعد التسجيل
-    flash('تم التسجيل بنجاح!')
-    return redirect(url_for('home'))
+    return render_template('home.html', participants=participants)
+
+@app.route('/participants', methods=['GET'])
+def get_participants():
+    # إعادة قائمة المشاركين كـ JSON
+    return jsonify(participants)
 
 @app.route('/edit/<ticket_number>', methods=['GET', 'POST'])
-@login_required
 def edit_participant(ticket_number):
-    # البحث عن المشارك باستخدام رقم التذكرة
+    # البحث عن المشارك بواسطة رقم التذكرة
     participant = next((p for p in participants if p['ticket_number'] == ticket_number), None)
-    
-    if not participant:
+
+    if participant is None:
         flash('المشارك غير موجود!')
         return redirect(url_for('home'))
 
     if request.method == 'POST':
-        # تحديث البيانات
+        # الحصول على البيانات الجديدة
         participant['name'] = request.form['name']
-        participant['national_id'] = request.form['national_id']
-        participant['ticket_number'] = request.form['ticket_number']
+        participant['id_card'] = request.form['id_card']
         participant['amount'] = request.form['amount']
-        
-        flash('تم تحديث البيانات بنجاح!')
+
+        # إعادة تحميل الصفحة الرئيسية بعد التعديل
+        flash('تم تعديل البيانات بنجاح!')
         return redirect(url_for('home'))
 
-    # عرض النموذج للتعديل
-    return render_template('edit_participant.html', participant=participant)
-
-@app.route('/participants', methods=['GET'])
-@login_required
-def get_participants():
-    return jsonify(participants)
+    return render_template('edit.html', participant=participant)
 
 if __name__ == '__main__':
     app.run(debug=True)
