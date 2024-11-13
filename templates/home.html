@@ -48,11 +48,20 @@
         {% endif %}
     {% endwith %}
 
+    <!-- نموذج الدخول للمساعدين -->
+    {% if not current_user.is_authenticated %}
+    <form method="POST" action="{{ url_for('login') }}">
+        <input type="text" name="username" placeholder="اسم المستخدم" required>
+        <input type="password" name="password" placeholder="كلمة المرور" required>
+        <button type="submit">تسجيل الدخول</button>
+    </form>
+    {% endif %}
+
     <!-- نموذج التسجيل -->
     <form method="POST" action="{{ url_for('register') }}">
+        <input type="text" name="ticket_number" placeholder="رقم التذكرة" required>
         <input type="text" name="name" placeholder="الاسم الكامل" required>
         <input type="text" name="id_card" placeholder="رقم البطاقة الوطنية" required>
-        <input type="text" name="ticket_number" placeholder="رقم التذكرة" required>
         <select name="amount" required>
             <option value="">اختر المبلغ المدفوع</option>
             <option value="100">100 درهم</option>
@@ -66,19 +75,23 @@
     <table>
         <thead>
             <tr>
+                <th>رقم التذكرة</th>
                 <th>الاسم الكامل</th>
                 <th>رقم البطاقة الوطنية</th>
-                <th>رقم التذكرة</th>
                 <th>المبلغ المدفوع</th>
+                <th>المساعد الذي قام بالتسجيل</th>
+                <th>الإجراءات</th>
             </tr>
         </thead>
         <tbody>
             {% for participant in participants %}
                 <tr>
+                    <td>{{ participant.ticket_number }}</td>
                     <td>{{ participant.name }}</td>
                     <td>{{ participant.id_card }}</td>
-                    <td>{{ participant.ticket_number }}</td>
                     <td>{{ participant.amount }} درهم</td>
+                    <td>{{ participant.added_by }}</td>
+                    <td><a href="{{ url_for('update', ticket_number=participant.ticket_number) }}">تعديل</a></td>
                 </tr>
             {% endfor %}
         </tbody>
