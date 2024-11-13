@@ -68,11 +68,12 @@ def logout():
     return redirect(url_for('login'))
 
 @app.route('/register', methods=['POST'])
+@login_required
 def register():
     # الحصول على البيانات من النموذج
+    ticket_number = request.form['ticket_number']
     name = request.form['name']
     id_card = request.form['id_card']
-    ticket_number = request.form['ticket_number']
     amount = request.form['amount']
 
     # التحقق من أن جميع الحقول تم ملؤها
@@ -91,16 +92,42 @@ def register():
             flash('رقم التذكرة موجود بالفعل!')
             return redirect(url_for('home'))
 
-    # إضافة الشخص إلى قائمة المشاركين
+    # إضافة الشخص إلى قائمة المشاركين مع المساعد الذي قام بتسجيله
     participants.append({
+        'ticket_number': ticket_number,
         'name': name,
         'id_card': id_card,
-        'ticket_number': ticket_number,
-        'amount': amount
+        'amount': amount,
+        'added_by': current_user.username  # إضافة المساعد الذي قام بتسجيل المشارك
     })
 
     # إعادة تحميل الصفحة الرئيسية بعد التسجيل
     return render_template('home.html', participants=participants)
+
+@app.route('/update/<ticket_number>', methods=['GET', 'POST'])
+@login_required
+def update(ticket_number):
+    # البحث عن المشارك باستخدام رقم التذكرة
+    participant = next((p for p in participants if p['ticket_number'] == ticket_number), None)
+
+    if not participant:
+        flash('رقم التذكرة غير موجود!')
+        return redirect(url_for('home'))
+
+    # التحقق من أن المساعد الذي يحاول التعديل هو نفسه الذي قام بتسجيل المشارك
+    if participant['added_by'] != current_user.username:
+        flash('لا يمكنك تعديل هذا المشارك لأنك لم تقم بتسجيله!')
+        return redirect(url_for('home'))
+
+    if request.method == 'POST':
+        # تحديث بيانات المشارك
+        participant['name'] = request.form['name']
+        participant['id_card'] = request.form['id_card']
+        participant['amount'] = request.form['amount']
+        flash('تم تحديث البيانات بنجاح!')
+        return redirect(url_for('home'))
+
+    return render_template('update.html', participant=participant)
 
 @app.route('/participants', methods=['GET'])
 def get_participants():
