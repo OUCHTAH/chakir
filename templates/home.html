@@ -4,6 +4,122 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تسجيل المشاركين</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            background-color: #fff;
+            margin: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        select,
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0 20px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: right;
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .button-container {
+            text-align: center;
+        }
+
+        button {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #e53935;
+        }
+
+        /* التنسيق للأجهزة المحمولة */
+        @media (max-width: 600px) {
+            h1, h2 {
+                font-size: 20px;
+            }
+
+            form {
+                margin: 10px;
+                padding: 15px;
+            }
+
+            input[type="text"], select, input[type="submit"] {
+                padding: 12px;
+                font-size: 16px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            button {
+                width: 100%;
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            input[type="submit"], button {
+                font-size: 14px;
+            }
+        }
+    </style>
 </head>
 <body>
     <h1>تسجيل المشاركين</h1>
@@ -14,8 +130,8 @@
         <label for="name">الاسم الكامل:</label>
         <input type="text" id="name" name="name" required><br><br>
 
-        <label for="email">البريد الإلكتروني:</label>
-        <input type="email" id="email" name="email" required><br><br>
+        <label for="national_id">رقم البطاقة الوطنية:</label>
+        <input type="text" id="national_id" name="national_id" required><br><br>
 
         <label for="amount">المبلغ المدفوع (بالدرهم):</label>
         <select id="amount" name="amount" required>
@@ -33,7 +149,7 @@
             <tr>
                 <th>رقم التذكرة</th>
                 <th>الاسم الكامل</th>
-                <th>البريد الإلكتروني</th>
+                <th>رقم البطاقة الوطنية</th>
                 <th>المبلغ المدفوع</th>
                 <th>تم التسجيل بواسطة</th>
                 <th>تعديل</th>
@@ -44,7 +160,7 @@
                 <tr>
                     <td>{{ participant['ticket_number'] }}</td>
                     <td>{{ participant['name'] }}</td>
-                    <td>{{ participant['email'] }}</td>
+                    <td>{{ participant['national_id'] }}</td>
                     <td>{{ participant['amount'] }}</td>
                     <td>{{ participant['added_by'] }}</td>
                     <td>
@@ -58,5 +174,11 @@
             {% endfor %}
         </tbody>
     </table>
+
+    <div class="button-container">
+        <form action="{{ url_for('logout') }}" method="POST">
+            <input type="submit" value="تسجيل الخروج">
+        </form>
+    </div>
 </body>
 </html>
