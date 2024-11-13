@@ -1,52 +1,88 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>التسجيل في الفعالية</title>
+    <title>تسجيل المشاركين</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: right;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        form {
+            margin-top: 20px;
+        }
+        input, select, button {
+            padding: 10px;
+            margin: 5px;
+            width: 100%;
+            max-width: 300px;
+        }
+    </style>
 </head>
 <body>
-    <h2>تسجيل المشاركين</h2>
-    <form method="POST" action="/register">
-        <label for="name">الاسم الكامل:</label>
-        <input type="text" id="name" name="name" required><br>
 
-        <label for="national_id">رقم البطاقة الوطنية:</label>
-        <input type="text" id="national_id" name="national_id" required><br>
+    <h1>تسجيل المشاركين</h1>
 
-        <label for="ticket_number">رقم التذكرة:</label>
-        <input type="text" id="ticket_number" name="ticket_number" required><br>
+    <!-- رسالة فلاش -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
 
-        <label for="amount">المبلغ المدفوع:</label>
-        <input type="number" id="amount" name="amount" required><br>
-
+    <!-- نموذج التسجيل -->
+    <form method="POST" action="{{ url_for('register') }}">
+        <input type="text" name="name" placeholder="الاسم الكامل" required>
+        <input type="text" name="id_card" placeholder="رقم البطاقة الوطنية" required>
+        <input type="text" name="ticket_number" placeholder="رقم التذكرة" required>
+        <select name="amount" required>
+            <option value="">اختر المبلغ المدفوع</option>
+            <option value="100">100 درهم</option>
+            <option value="200">200 درهم</option>
+            <option value="300">300 درهم</option>
+        </select>
         <button type="submit">تسجيل</button>
     </form>
 
-    <h2>المشاركون المسجلون</h2>
-    <table border="1">
+    <h2>المشاركين المسجلين</h2>
+    <table>
         <thead>
             <tr>
                 <th>الاسم الكامل</th>
                 <th>رقم البطاقة الوطنية</th>
                 <th>رقم التذكرة</th>
                 <th>المبلغ المدفوع</th>
-                <th>التعديل</th>
             </tr>
         </thead>
         <tbody>
             {% for participant in participants %}
-            <tr>
-                <td>{{ participant.name }}</td>
-                <td>{{ participant.national_id }}</td>
-                <td>{{ participant.ticket_number }}</td>
-                <td>{{ participant.amount }}</td>
-                <td>
-                    <a href="{{ url_for('edit_participant', ticket_number=participant.ticket_number) }}">تعديل</a>
-                </td>
-            </tr>
+                <tr>
+                    <td>{{ participant.name }}</td>
+                    <td>{{ participant.id_card }}</td>
+                    <td>{{ participant.ticket_number }}</td>
+                    <td>{{ participant.amount }} درهم</td>
+                </tr>
             {% endfor %}
         </tbody>
     </table>
+
 </body>
 </html>
