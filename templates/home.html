@@ -4,98 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تسجيل المشاركين</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            direction: rtl;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            padding: 10px;
-            text-align: right;
-            border: 1px solid #ddd;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        form {
-            margin-top: 20px;
-        }
-        input, select, button {
-            padding: 10px;
-            margin: 5px;
-            width: 100%;
-            max-width: 300px;
-        }
-    </style>
 </head>
 <body>
-
     <h1>تسجيل المشاركين</h1>
+    <form action="{{ url_for('register') }}" method="POST">
+        <label for="ticket_number">رقم التذكرة:</label>
+        <input type="text" id="ticket_number" name="ticket_number" required><br><br>
 
-    <!-- رسالة فلاش -->
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <ul>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
+        <label for="name">الاسم الكامل:</label>
+        <input type="text" id="name" name="name" required><br><br>
 
-    <!-- نموذج الدخول للمساعدين -->
-    {% if not current_user.is_authenticated %}
-    <form method="POST" action="{{ url_for('login') }}">
-        <input type="text" name="username" placeholder="اسم المستخدم" required>
-        <input type="password" name="password" placeholder="كلمة المرور" required>
-        <button type="submit">تسجيل الدخول</button>
-    </form>
-    {% endif %}
+        <label for="email">البريد الإلكتروني:</label>
+        <input type="email" id="email" name="email" required><br><br>
 
-    <!-- نموذج التسجيل -->
-    <form method="POST" action="{{ url_for('register') }}">
-        <input type="text" name="ticket_number" placeholder="رقم التذكرة" required>
-        <input type="text" name="name" placeholder="الاسم الكامل" required>
-        <input type="text" name="id_card" placeholder="رقم البطاقة الوطنية" required>
-        <select name="amount" required>
-            <option value="">اختر المبلغ المدفوع</option>
+        <label for="amount">المبلغ المدفوع (بالدرهم):</label>
+        <select id="amount" name="amount" required>
             <option value="100">100 درهم</option>
             <option value="200">200 درهم</option>
             <option value="300">300 درهم</option>
-        </select>
-        <button type="submit">تسجيل</button>
+        </select><br><br>
+
+        <input type="submit" value="تسجيل">
     </form>
 
-    <h2>المشاركين المسجلين</h2>
-    <table>
+    <h2>قائمة المشاركين:</h2>
+    <table border="1">
         <thead>
             <tr>
                 <th>رقم التذكرة</th>
                 <th>الاسم الكامل</th>
-                <th>رقم البطاقة الوطنية</th>
+                <th>البريد الإلكتروني</th>
                 <th>المبلغ المدفوع</th>
-                <th>المساعد الذي قام بالتسجيل</th>
-                <th>الإجراءات</th>
+                <th>تم التسجيل بواسطة</th>
+                <th>تعديل</th>
             </tr>
         </thead>
         <tbody>
             {% for participant in participants %}
                 <tr>
-                    <td>{{ participant.ticket_number }}</td>
-                    <td>{{ participant.name }}</td>
-                    <td>{{ participant.id_card }}</td>
-                    <td>{{ participant.amount }} درهم</td>
-                    <td>{{ participant.added_by }}</td>
-                    <td><a href="{{ url_for('update', ticket_number=participant.ticket_number) }}">تعديل</a></td>
+                    <td>{{ participant['ticket_number'] }}</td>
+                    <td>{{ participant['name'] }}</td>
+                    <td>{{ participant['email'] }}</td>
+                    <td>{{ participant['amount'] }}</td>
+                    <td>{{ participant['added_by'] }}</td>
+                    <td>
+                        {% if participant['added_by'] == current_user.username %}
+                            <a href="{{ url_for('update', ticket_number=participant['ticket_number']) }}">تعديل</a>
+                        {% else %}
+                            غير مسموح بالتعديل
+                        {% endif %}
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
-
 </body>
 </html>
