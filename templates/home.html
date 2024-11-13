@@ -1,60 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Registration</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <title>التسجيل في الفعالية</title>
 </head>
 <body>
-    <div class="container">
-        <h1 class="my-4">Welcome to the Event Registration App</h1>
-        
-        <!-- Registration Form -->
-        <form method="POST" action="/register">
-            <div class="form-group">
-                <label for="name">Full Name</label>
-                <input type="text" class="form-control" id="name" name="name" required>
-            </div>
+    <h2>تسجيل المشاركين</h2>
+    <form method="POST" action="/register">
+        <label for="name">الاسم الكامل:</label>
+        <input type="text" id="name" name="name" required><br>
 
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" class="form-control" id="email" name="email" required>
-            </div>
+        <label for="national_id">رقم البطاقة الوطنية:</label>
+        <input type="text" id="national_id" name="national_id" required><br>
 
-            <div class="form-group">
-                <label for="amount">Amount Paid</label>
-                <input type="number" class="form-control" id="amount" name="amount" required>
-            </div>
+        <label for="ticket_number">رقم التذكرة:</label>
+        <input type="text" id="ticket_number" name="ticket_number" required><br>
 
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
+        <label for="amount">المبلغ المدفوع:</label>
+        <input type="number" id="amount" name="amount" required><br>
 
-        <hr>
+        <button type="submit">تسجيل</button>
+    </form>
 
-        <h2 class="my-4">Registered Participants</h2>
-        <ul id="participants">
-            <!-- List of participants will be dynamically loaded here -->
-        </ul>
-    </div>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        // Function to load participants dynamically
-        function loadParticipants() {
-            $.get("/participants", function(data) {
-                let participantList = $('#participants');
-                participantList.empty();
-                data.forEach(function(participant) {
-                    participantList.append('<li>' + participant.name + ' - ' + participant.email + ' - $' + participant.amount + '</li>');
-                });
-            });
-        }
-
-        // Initial load of participants when the page is ready
-        $(document).ready(function() {
-            loadParticipants();
-        });
-    </script>
+    <h2>المشاركون المسجلون</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>الاسم الكامل</th>
+                <th>رقم البطاقة الوطنية</th>
+                <th>رقم التذكرة</th>
+                <th>المبلغ المدفوع</th>
+                <th>التعديل</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for participant in participants %}
+            <tr>
+                <td>{{ participant.name }}</td>
+                <td>{{ participant.national_id }}</td>
+                <td>{{ participant.ticket_number }}</td>
+                <td>{{ participant.amount }}</td>
+                <td>
+                    <a href="{{ url_for('edit_participant', ticket_number=participant.ticket_number) }}">تعديل</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </body>
 </html>
