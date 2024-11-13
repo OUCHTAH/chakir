@@ -32,7 +32,6 @@ participants = []
 
 @app.route('/')
 def home():
-    # عرض الصفحة الرئيسية مع عرض المشاركين المسجلين
     return render_template('home.html', participants=participants)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -66,19 +65,54 @@ def logout():
 def register():
     # الحصول على البيانات من النموذج
     name = request.form['name']
-    email = request.form['email']
+    national_id = request.form['national_id']
+    ticket_number = request.form['ticket_number']
     amount = request.form['amount']
 
+    # التحقق من أن جميع الحقول مملوءة
+    if not name or not national_id or not ticket_number or not amount:
+        flash('جميع الحقول يجب أن تكون مملوءة!')
+        return redirect(url_for('home'))
+
+    # التحقق من عدم تكرار رقم التذكرة
+    for participant in participants:
+        if participant['ticket_number'] == ticket_number:
+            flash('رقم التذكرة مكرر! يرجى إدخال رقم تذكرة مختلف.')
+            return redirect(url_for('home'))
+
     # إضافة الشخص إلى قائمة المشاركين
-    participants.append({'name': name, 'email': email, 'amount': amount})
+    participants.append({'name': name, 'national_id': national_id, 'ticket_number': ticket_number, 'amount': amount})
 
     # إعادة تحميل الصفحة الرئيسية بعد التسجيل
-    return render_template('home.html', participants=participants)
+    flash('تم التسجيل بنجاح!')
+    return redirect(url_for('home'))
+
+@app.route('/edit/<ticket_number>', methods=['GET', 'POST'])
+@login_required
+def edit_participant(ticket_number):
+    # البحث عن المشارك باستخدام رقم التذكرة
+    participant = next((p for p in participants if p['ticket_number'] == ticket_number), None)
+    
+    if not participant:
+        flash('المشارك غير موجود!')
+        return redirect(url_for('home'))
+
+    if request.method == 'POST':
+        # تحديث البيانات
+        participant['name'] = request.form['name']
+        participant['national_id'] = request.form['national_id']
+        participant['ticket_number'] = request.form['ticket_number']
+        participant['amount'] = request.form['amount']
+        
+        flash('تم تحديث البيانات بنجاح!')
+        return redirect(url_for('home'))
+
+    # عرض النموذج للتعديل
+    return render_template('edit_participant.html', participant=participant)
 
 @app.route('/participants', methods=['GET'])
 @login_required
 def get_participants():
-    # إعادة قائمة المشاركين كـ JSON
     return jsonify(participants)
 
 if __name__ == '__main__':
