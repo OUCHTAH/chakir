@@ -1,8 +1,6 @@
-from flask import Flask, render_template, redirect, url_for, request, flash, jsonify
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 from werkzeug.security import generate_password_hash, check_password_hash
-import pandas as pd
-import openpyxl
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
@@ -19,7 +17,7 @@ class User(UserMixin):
         self.username = username
         self.password_hash = generate_password_hash(password)
 
-# قاعدة بيانات المستخدمين مع المستخدمين الجدد
+# قاعدة بيانات بسيطة للمستخدمين
 users = {
     'rachid': User(id=1, username='rachid', password='Rachid123@@'),
     'fanna': User(id=2, username='fanna', password='Rachid124@@'),
@@ -31,6 +29,7 @@ users = {
 # قائمة لتخزين المشاركين
 participants = []
 
+# تحميل المستخدم
 @login_manager.user_loader
 def load_user(user_id):
     for user in users.values():
@@ -40,7 +39,6 @@ def load_user(user_id):
 
 @app.route('/')
 def home():
-    # عرض الصفحة الرئيسية مع عرض المشاركين المسجلين
     return render_template('home.html', participants=participants)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -82,6 +80,11 @@ def register():
         flash('جميع الحقول مطلوبة!')
         return redirect(url_for('home'))
 
+    # التحقق من أن رقم التذكرة يحتوي فقط على أرقام
+    if not ticket_number.isdigit():
+        flash('رقم التذكرة يجب أن يحتوي على أرقام فقط!')
+        return redirect(url_for('home'))
+
     # التحقق من عدم تكرار رقم التذكرة
     for participant in participants:
         if participant['ticket_number'] == ticket_number:
@@ -101,29 +104,7 @@ def register():
 
 @app.route('/participants', methods=['GET'])
 def get_participants():
-    # إعادة قائمة المشاركين كـ JSON
     return jsonify(participants)
-
-@app.route('/edit/<ticket_number>', methods=['GET', 'POST'])
-def edit_participant(ticket_number):
-    # البحث عن المشارك بواسطة رقم التذكرة
-    participant = next((p for p in participants if p['ticket_number'] == ticket_number), None)
-
-    if participant is None:
-        flash('المشارك غير موجود!')
-        return redirect(url_for('home'))
-
-    if request.method == 'POST':
-        # الحصول على البيانات الجديدة
-        participant['name'] = request.form['name']
-        participant['id_card'] = request.form['id_card']
-        participant['amount'] = request.form['amount']
-
-        # إعادة تحميل الصفحة الرئيسية بعد التعديل
-        flash('تم تعديل البيانات بنجاح!')
-        return redirect(url_for('home'))
-
-    return render_template('edit.html', participant=participant)
 
 if __name__ == '__main__':
     app.run(debug=True)
