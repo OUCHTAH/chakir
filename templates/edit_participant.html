@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تعديل بيانات المشارك</title>
+</head>
+<body>
+    <h2>تعديل بيانات المشارك</h2>
+    <form method="POST">
+        <label for="name">الاسم الكامل:</label>
+        <input type="text" id="name" name="name" value="{{ participant.name }}" required><br>
+
+        <label for="national_id">رقم البطاقة الوطنية:</label>
+        <input type="text" id="national_id" name="national_id" value="{{ participant.national_id }}" required><br>
+
+        <label for="ticket_number">رقم التذكرة:</label>
+        <input type="text" id="ticket_number" name="ticket_number" value="{{ participant.ticket_number }}" required><br>
+
+        <label for="amount">المبلغ المدفوع:</label>
+        <input type="number" id="amount" name="amount" value="{{ participant.amount }}" required><br>
+
+        <button type="submit">تحديث</button>
+    </form>
+</body>
+</html>
