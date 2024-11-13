@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تعديل المشارك</title>
+</head>
+<body>
+
+    <h1>تعديل المشارك</h1>
+
+    <form method="POST">
+        <input type="text" name="name" value="{{ participant.name }}" required>
+        <input type="text" name="id_card" value="{{ participant.id_card }}" required>
+        <select name="amount" required>
+            <option value="100" {% if participant.amount == '100' %}selected{% endif %}>100 درهم</option>
+            <option value="200" {% if participant.amount == '200' %}selected{% endif %}>200 درهم</option>
+            <option value="300" {% if participant.amount == '300' %}selected{% endif %}>300 درهم</option>
+        </select>
+        <button type="submit">تحديث</button>
+    </form>
+
+</body>
+</html>
