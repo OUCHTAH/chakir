@@ -3,16 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تعديل بيانات المشارك</title>
+    <title>تعديل المشارك</title>
+    <style>
+        /* يمكنك إضافة التنسيق الذي تفضله هنا */
+    </style>
 </head>
 <body>
-    <h1>تعديل بيانات المشارك</h1>
+    <h1>تعديل المشارك</h1>
     <form action="{{ url_for('update', ticket_number=participant['ticket_number']) }}" method="POST">
         <label for="name">الاسم الكامل:</label>
         <input type="text" id="name" name="name" value="{{ participant['name'] }}" required><br><br>
 
-        <label for="email">البريد الإلكتروني:</label>
-        <input type="email" id="email" name="email" value="{{ participant['email'] }}" required><br><br>
+        <label for="national_id">رقم البطاقة الوطنية:</label>
+        <input type="text" id="national_id" name="national_id" value="{{ participant['national_id'] }}" required><br><br>
 
         <label for="amount">المبلغ المدفوع (بالدرهم):</label>
         <select id="amount" name="amount" required>
