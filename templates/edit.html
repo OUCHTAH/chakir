@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>تعديل المسجل</title>
+</head>
+<body>
+    <form action="{{ url_for('edit_registrant', index=index) }}" method="post">
+        <input type="text" name="name" value="{{ registrant['الاسم'] }}" required>
+        <input type="text" name="phone" value="{{ registrant['الهاتف'] }}" required>
+        <input type="text" name="national_id" value="{{ registrant['رقم البطاقة الوطنية'] }}" required>
+        <input type="text" name="ticket_number" value="{{ registrant['رقم التذكرة'] }}" required>
+        <input type="text" name="payment" value="{{ registrant['المبلغ المدفوع'] }}" required>
+        <button type="submit">حفظ التعديلات</button>
+    </form>
+</body>
+</html>

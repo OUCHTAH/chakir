@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قائمة المسجلين</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">قائمة المسجلين</h1>
+        
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>الاسم</th>
+                    <th>رقم التذكرة</th>
+                    <th>المبلغ المدفوع</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for registrant in registrants %}
+                <tr>
+                    <td>{{ registrant["الاسم"] }}</td>
+                    <td>{{ registrant["رقم التذكرة"] }}</td>
+                    <td>{{ registrant["المبلغ المدفوع"] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h3>إضافة مسجل جديد</h3>
+        <form action="{{ url_for('add_registrant') }}" method="post">
+            <div class="mb-3">
+                <label for="name" class="form-label">الاسم</label>
+                <input type="text" name="name" id="name" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="phone" class="form-label">الهاتف</label>
+                <input type="text" name="phone" id="phone" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="national_id" class="form-label">رقم البطاقة الوطنية</label>
+                <input type="text" name="national_id" id="national_id" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="ticket_number" class="form-label">رقم التذكرة</label>
+                <input type="text" name="ticket_number" id="ticket_number" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="payment" class="form-label">المبلغ المدفوع</label>
+                <input type="text" name="payment" id="payment" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-success w-100">إضافة</button>
+        </form>
+        <br>
+        <a href="{{ url_for('logout') }}" class="btn btn-danger w-100">تسجيل الخروج</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
