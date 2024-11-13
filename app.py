@@ -1,8 +1,6 @@
-from flask import Flask, render_template, redirect, url_for, request, flash
+from flask import Flask, render_template, redirect, url_for, request, flash, jsonify
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-import pandas as pd
-import openpyxl
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
@@ -29,9 +27,13 @@ def load_user(user_id):
             return user
     return None
 
+# قائمة لتخزين المشاركين
+participants = []
+
 @app.route('/')
 def home():
-    return render_template('home.html')
+    # عرض الصفحة الرئيسية مع عرض المشاركين المسجلين
+    return render_template('home.html', participants=participants)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -58,6 +60,26 @@ def logout():
     logout_user()
     flash('تم تسجيل الخروج بنجاح!')
     return redirect(url_for('login'))
+
+@app.route('/register', methods=['POST'])
+@login_required
+def register():
+    # الحصول على البيانات من النموذج
+    name = request.form['name']
+    email = request.form['email']
+    amount = request.form['amount']
+
+    # إضافة الشخص إلى قائمة المشاركين
+    participants.append({'name': name, 'email': email, 'amount': amount})
+
+    # إعادة تحميل الصفحة الرئيسية بعد التسجيل
+    return render_template('home.html', participants=participants)
+
+@app.route('/participants', methods=['GET'])
+@login_required
+def get_participants():
+    # إعادة قائمة المشاركين كـ JSON
+    return jsonify(participants)
 
 if __name__ == '__main__':
     app.run(debug=True)
