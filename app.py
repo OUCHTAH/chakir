@@ -18,13 +18,20 @@ scopes = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapi
 creds = Credentials.from_service_account_file("chakir-441715-e791e6fcbd91.json", scopes=scopes)
 client = gspread.authorize(creds)
 
-# جرب طباعة أسماء الأوراق المتاحة
+# فتح الملف واختيار الورقة
 spreadsheet = client.open_by_url("https://docs.google.com/spreadsheets/d/14MBgYNZgGSZasniSdGrbAsaqO9DR012Qab9ZOKeFEBE/edit?gid=0")
+
+# جرب طباعة أسماء الأوراق المتاحة
 worksheets = spreadsheet.worksheets()
 print([worksheet.title for worksheet in worksheets])  # طباعة أسماء الأوراق
 
 # فتح الورقة المطلوبة
-sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/14MBgYNZgGSZasniSdGrbAsaqO9DR012Qab9ZOKeFEBE/edit?gid=0").worksheet("chakir event")
+try:
+    sheet = spreadsheet.worksheet("chakir event")
+except gspread.exceptions.WorksheetNotFound:
+    # إذا لم توجد الورقة، سيتم إنشاؤها
+    sheet = spreadsheet.add_worksheet(title="chakir event", rows="100", cols="20")
+    print("تم إنشاء الورقة 'chakir event' بنجاح.")
 
 # نموذج المستخدم
 class User(UserMixin):
