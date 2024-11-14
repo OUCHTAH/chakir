@@ -51,15 +51,15 @@ def load_user(user_id):
 @app.route('/')
 @login_required
 def home():
-    total_amount = sum(p['amount'] for p in participants)  # حساب إجمالي المبلغ
+    total_amount = len(participants) * 300  # حساب إجمالي المبلغ
     participants_sorted = sorted(participants, key=lambda p: p['name'])  # ترتيب المشاركين حسب الاسم
     return render_template('home.html', participants=participants_sorted, total_amount=total_amount)
 
 @app.route('/register', methods=['POST'])
 @login_required
 def register():
-    name = request.form['name']
     ticket_number = request.form['ticket_number']
+    name = request.form['name']
     id_card_number = request.form['id_card_number']
     amount = 300  # المبلغ الكلي ثابت لكل مشارك
 
@@ -79,7 +79,7 @@ def register():
     })
 
     # إضافة البيانات إلى Google Sheets
-    sheet.append_row([name, ticket_number, id_card_number, current_user.username, datetime.now().strftime('%Y-%m-%d %H:%M:%S'), amount])
+    sheet.append_row([ticket_number, name, id_card_number, current_user.username, datetime.now().strftime('%Y-%m-%d %H:%M:%S'), amount])
 
     flash('تم التسجيل بنجاح!')
     return redirect(url_for('home'))
