@@ -1,6 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
+import gspread
+from google.oauth2.service_account import Credentials
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
@@ -26,8 +28,11 @@ users = {
     'user3': User(id=5, username='user3', password='Rachid123@@Use23')
 }
 
-# قاعدة بيانات المشاركين
-participants = []
+# إعداد Google Sheets API
+scopes = ["https://www.googleapis.com/auth/spreadsheets"]
+creds = Credentials.from_service_account_file("path/to/your-service-account-file.json", scopes=scopes)
+client = gspread.authorize(creds)
+sheet = client.open("اسم_الملف_في_Google_Sheets").sheet1  # اختر الورقة
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -39,7 +44,7 @@ def load_user(user_id):
 @app.route('/')
 @login_required
 def home():
-    return render_template('home.html', participants=participants)
+    return render_template('home.html')
 
 @app.route('/register', methods=['POST'])
 @login_required
@@ -50,17 +55,13 @@ def register():
     amount = request.form['amount']
 
     # التحقق من عدم وجود تكرار في رقم التذكرة
-    if any(p['ticket_number'] == ticket_number for p in participants):
+    existing_entries = sheet.get_all_records()
+    if any(p['ticket_number'] == ticket_number for p in existing_entries):
         flash('رقم التذكرة موجود بالفعل!')
         return redirect(url_for('home'))
 
-    participants.append({
-        'ticket_number': ticket_number,
-        'name': name,
-        'national_id': national_id,
-        'amount': amount,
-        'added_by': current_user.username
-    })
+    # إضافة البيانات إلى Google Sheets
+    sheet.append_row([ticket_number, name, national_id, amount, current_user.username])
 
     flash('تم التسجيل بنجاح!')
     return redirect(url_for('home'))
@@ -68,8 +69,9 @@ def register():
 @app.route('/update/<ticket_number>', methods=['GET', 'POST'])
 @login_required
 def update(ticket_number):
-    # البحث عن المشارك باستخدام رقم التذكرة
-    participant = next((p for p in participants if p['ticket_number'] == ticket_number), None)
+    # البحث عن المشارك باستخدام رقم التذكرة في Google Sheets
+    existing_entries = sheet.get_all_records()
+    participant = next((p for p in existing_entries if p['ticket_number'] == ticket_number), None)
 
     if not participant:
         flash('المشارك غير موجود!')
@@ -81,9 +83,12 @@ def update(ticket_number):
         return redirect(url_for('home'))
 
     if request.method == 'POST':
-        participant['name'] = request.form['name']
-        participant['national_id'] = request.form['national_id']
-        participant['amount'] = request.form['amount']
+        # تحديث بيانات المشارك في Google Sheets
+        row_index = existing_entries.index(participant) + 2  # إضافة 2 لأن البيانات تبدأ من الصف الثاني
+        sheet.update_cell(row_index, 2, request.form['name'])
+        sheet.update_cell(row_index, 3, request.form['national_id'])
+        sheet.update_cell(row_index, 4, request.form['amount'])
+
         flash('تم التعديل بنجاح!')
         return redirect(url_for('home'))
 
