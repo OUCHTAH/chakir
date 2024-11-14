@@ -3,48 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>المشاركين</title>
+    <title>الصفحة الرئيسية</title>
+    <!-- رابط إلى Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- إعداد اتجاه النص من اليمين لليسار -->
+    <style>
+        body {
+            direction: rtl;
+            text-align: right;
+        }
+        .container {
+            margin-top: 20px;
+        }
+        table {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>مرحبًا، {{ current_user.username }}</h1>
-    <p>إجمالي المبلغ: {{ total_amount }} درهم</p>
-    <a href="{{ url_for('logout') }}">الخروج</a>
+    <div class="container">
+        <h1 class="text-center">قائمة المشاركين</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>اسم المشارك</th>
+                    <th>رقم التذكرة</th>
+                    <th>الرقم الوطني</th>
+                    <th>تم التسجيل بواسطة</th>
+                    <th>تاريخ التسجيل</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for participant in participants %}
+                    <tr>
+                        <td>{{ participant['name'] }}</td>
+                        <td>{{ participant['ticket_number'] }}</td>
+                        <td>{{ participant['national_id'] }}</td>
+                        <td>{{ participant['added_by'] }}</td>
+                        <td>{{ participant['registration_date'] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="text-center">
+            <a href="{{ url_for('register') }}" class="btn btn-primary">إضافة مشارك جديد</a>
+        </div>
+    </div>
 
-    <h2>المشاركين المسجلين</h2>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>الاسم</th>
-                <th>رقم الهوية الوطنية</th>
-                <th>المبلغ</th>
-                <th>تم التسجيل بواسطة</th>
-                <th>تاريخ التسجيل</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for participant in participants %}
-            <tr>
-                <td>{{ participant.name }}</td>
-                <td>{{ participant.national_id }}</td>
-                <td>{{ participant.amount }} درهم</td>
-                <td>{{ participant.added_by }}</td>
-                <td>{{ participant.registration_date }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <form action="{{ url_for('register') }}" method="POST">
-        <h3>إضافة مشارك جديد</h3>
-        <label>اسم:</label>
-        <input type="text" name="name" required><br>
-        <label>رقم الهوية الوطنية:</label>
-        <input type="text" name="national_id" required><br>
-        <label>رقم التذكرة:</label>
-        <input type="text" name="ticket_number" required><br>
-        <label>المبلغ المدفوع (300 درهم):</label>
-        <input type="number" name="amount" value="300" required><br>
-        <button type="submit">تسجيل</button>
-    </form>
+    <!-- رابط إلى Bootstrap JS و jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
