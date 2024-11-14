@@ -1,184 +1,40 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل المشاركين</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            direction: rtl;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-
-        h1, h2 {
-            text-align: center;
-            color: #333;
-        }
-
-        form {
-            background-color: #fff;
-            margin: 20px;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        label {
-            display: block;
-            margin: 10px 0 5px;
-            font-weight: bold;
-        }
-
-        input[type="text"],
-        select,
-        input[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0 20px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            box-sizing: border-box;
-        }
-
-        input[type="submit"] {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #45a049;
-        }
-
-        table {
-            width: 100%;
-            margin-top: 20px;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            text-align: right;
-            padding: 8px;
-            border: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-
-        .button-container {
-            text-align: center;
-        }
-
-        button {
-            background-color: #f44336;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #e53935;
-        }
-
-        /* التنسيق للأجهزة المحمولة */
-        @media (max-width: 600px) {
-            h1, h2 {
-                font-size: 20px;
-            }
-
-            form {
-                margin: 10px;
-                padding: 15px;
-            }
-
-            input[type="text"], select, input[type="submit"] {
-                padding: 12px;
-                font-size: 16px;
-            }
-
-            table {
-                font-size: 14px;
-            }
-
-            button {
-                width: 100%;
-                font-size: 18px;
-            }
-        }
-
-        @media (max-width: 400px) {
-            input[type="submit"], button {
-                font-size: 14px;
-            }
-        }
-    </style>
+    <title>الصفحة الرئيسية</title>
 </head>
 <body>
-    <h1>تسجيل المشاركين</h1>
-    <form action="{{ url_for('register') }}" method="POST">
-        <label for="ticket_number">رقم التذكرة:</label>
-        <input type="text" id="ticket_number" name="ticket_number" required><br><br>
+    <h1>مرحبًا، {{ current_user.username }}</h1>
 
-        <label for="name">الاسم الكامل:</label>
-        <input type="text" id="name" name="name" required><br><br>
+    <!-- عرض إجمالي الأموال -->
+    <h2>إجمالي الأموال: {{ total_amount }} درهم</h2>
 
-        <label for="national_id">رقم البطاقة الوطنية:</label>
-        <input type="text" id="national_id" name="national_id" required><br><br>
-
-        <label for="amount">المبلغ المدفوع (بالدرهم):</label>
-        <select id="amount" name="amount" required>
-            <option value="100">100 درهم</option>
-            <option value="200">200 درهم</option>
-            <option value="300">300 درهم</option>
-        </select><br><br>
-
-        <input type="submit" value="تسجيل">
-    </form>
-
-    <h2>قائمة المشاركين:</h2>
-    <table border="1">
+    <h3>المشاركون</h3>
+    <table>
         <thead>
             <tr>
                 <th>رقم التذكرة</th>
-                <th>الاسم الكامل</th>
-                <th>رقم البطاقة الوطنية</th>
-                <th>المبلغ المدفوع</th>
-                <th>تم التسجيل بواسطة</th>
-                <th>تعديل</th>
+                <th>الاسم</th>
+                <th>الرقم الوطني</th>
+                <th>التاريخ والوقت</th>
+                <th>تم بواسطة</th>
             </tr>
         </thead>
         <tbody>
             {% for participant in participants %}
-                <tr>
-                    <td>{{ participant['ticket_number'] }}</td>
-                    <td>{{ participant['name'] }}</td>
-                    <td>{{ participant['national_id'] }}</td>
-                    <td>{{ participant['amount'] }}</td>
-                    <td>{{ participant['added_by'] }}</td>
-                    <td>
-                        {% if participant['added_by'] == current_user.username %}
-                            <a href="{{ url_for('update', ticket_number=participant['ticket_number']) }}">تعديل</a>
-                        {% else %}
-                            غير مسموح بالتعديل
-                        {% endif %}
-                    </td>
-                </tr>
+            <tr>
+                <td>{{ participant.ticket_number }}</td>
+                <td>{{ participant.name }}</td>
+                <td>{{ participant.national_id }}</td>
+                <td>{{ participant.registration_datetime }}</td>
+                <td>{{ participant.added_by }}</td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    <div class="button-container">
-        <form action="{{ url_for('logout') }}" method="POST">
-            <input type="submit" value="تسجيل الخروج">
-        </form>
-    </div>
+    <a href="{{ url_for('logout') }}">الخروج فقط</a>
 </body>
 </html>
