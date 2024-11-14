@@ -96,14 +96,21 @@
             <div class="total-amount">
                 <strong>المبلغ الكلي: </strong> {{ total_amount }} درهم
             </div>
-            <h2>إضافة مشارك جديد</h2>
+            <h2>مرحبًا، {{ current_user.username }}</h2>
+            <form method="POST" action="{{ url_for('logout') }}">
+                <button type="submit">تسجيل الخروج</button>
+            </form>
+        </div>
+
+        <div class="form-container">
+            <h3>إضافة مشارك جديد</h3>
             <form method="POST" action="{{ url_for('register') }}">
                 <div class="form-group">
                     <label for="ticket_number">رقم التذكرة</label>
                     <input type="text" id="ticket_number" name="ticket_number" required>
                 </div>
                 <div class="form-group">
-                    <label for="name">اسم المشارك</label>
+                    <label for="name">الاسم الكامل</label>
                     <input type="text" id="name" name="name" required>
                 </div>
                 <div class="form-group">
@@ -124,8 +131,9 @@
                         <th>الرقم</th>
                         <th>رقم التذكرة</th>
                         <th>الاسم الكامل</th>
-                        <th>تم التسجيل بواسطة</th>
+                        <th>البائع</th>
                         <th>التاريخ</th>
+                        <th>التعديل</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -136,6 +144,13 @@
                         <td>{{ p.name }}</td>
                         <td>{{ p.added_by }}</td>
                         <td>{{ p.registration_date }}</td>
+                        <td>
+                            {% if p.added_by == current_user.username %}
+                                <a href="{{ url_for('update', ticket_number=p.ticket_number) }}">تعديل</a>
+                            {% else %}
+                                غير مصرح لك بالتعديل
+                            {% endif %}
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
