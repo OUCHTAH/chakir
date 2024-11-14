@@ -17,6 +17,13 @@ login_manager.login_view = 'login'
 scopes = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
 creds = Credentials.from_service_account_file("chakir-441715-e791e6fcbd91.json", scopes=scopes)
 client = gspread.authorize(creds)
+
+# جرب طباعة أسماء الأوراق المتاحة
+spreadsheet = client.open_by_url("https://docs.google.com/spreadsheets/d/14MBgYNZgGSZasniSdGrbAsaqO9DR012Qab9ZOKeFEBE/edit?gid=0")
+worksheets = spreadsheet.worksheets()
+print([worksheet.title for worksheet in worksheets])  # طباعة أسماء الأوراق
+
+# فتح الورقة المطلوبة
 sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/14MBgYNZgGSZasniSdGrbAsaqO9DR012Qab9ZOKeFEBE/edit?gid=0").worksheet("chakir event")
 
 # نموذج المستخدم
