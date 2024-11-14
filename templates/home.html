@@ -18,36 +18,64 @@
         table {
             margin-top: 20px;
         }
+        .form-container {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1 class="text-center">قائمة المشاركين</h1>
+        
+        <!-- نموذج إضافة مشارك جديد -->
+        <div class="form-container">
+            <form method="POST" action="{{ url_for('register') }}">
+                <div class="form-group">
+                    <label for="name">الاسم</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="ticket_number">رقم التذكرة</label>
+                    <input type="text" class="form-control" id="ticket_number" name="ticket_number" required>
+                </div>
+                <div class="form-group">
+                    <label for="id_card_number">رقم البطاقة</label>
+                    <input type="text" class="form-control" id="id_card_number" name="id_card_number" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-block">إضافة</button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- عرض قائمة المشاركين في جدول -->
         <table class="table table-striped">
             <thead>
                 <tr>
+                    <th>رقم المشارك</th>
                     <th>اسم المشارك</th>
                     <th>رقم التذكرة</th>
-                    <th>الرقم الوطني</th>
+                    <th>رقم البطاقة</th>
                     <th>تم التسجيل بواسطة</th>
                     <th>تاريخ التسجيل</th>
+                    <th>المبلغ الكلي (بالدرهم)</th>
                 </tr>
             </thead>
             <tbody>
                 {% for participant in participants %}
                     <tr>
+                        <td>{{ loop.index }}</td>
                         <td>{{ participant['name'] }}</td>
                         <td>{{ participant['ticket_number'] }}</td>
-                        <td>{{ participant['national_id'] }}</td>
+                        <td>{{ participant['id_card_number'] }}</td>
                         <td>{{ participant['added_by'] }}</td>
                         <td>{{ participant['registration_date'] }}</td>
+                        <td>{{ 300 }}</td> <!-- المبلغ الثابت لكل مشارك -->
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
-        <div class="text-center">
-            <a href="{{ url_for('register') }}" class="btn btn-primary">إضافة مشارك جديد</a>
-        </div>
+        
     </div>
 
     <!-- رابط إلى Bootstrap JS و jQuery -->
