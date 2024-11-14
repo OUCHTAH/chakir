@@ -14,10 +14,10 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 # إعداد Google Sheets API
-scopes = ["https://www.googleapis.com/auth/spreadsheets"]
+scopes = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
 creds = Credentials.from_service_account_file("chakir-441715-e791e6fcbd91.json", scopes=scopes)
 client = gspread.authorize(creds)
-sheet = client.open("اسم_الملف_في_Google_Sheets").sheet1  # اختر الورقة
+sheet = client.open("اسم_الملف_في_Google_Sheets").sheet1  # اختر الورقة الخاصة بك
 
 # نموذج المستخدم
 class User(UserMixin):
@@ -48,9 +48,9 @@ def load_user(user_id):
 @app.route('/')
 @login_required
 def home():
-    total_amount = len(participants) * 300  # إجمالي المبالغ
-    sorted_participants = sorted(participants, key=lambda p: p['ticket_number'])  # ترتيب المشاركين حسب رقم التذكرة
-    return render_template('home.html', participants=sorted_participants, total_amount=total_amount)
+    total_amount = sum(int(p['amount']) for p in participants)  # حساب إجمالي المبلغ
+    participants_sorted = sorted(participants, key=lambda p: p['name'])  # ترتيب المشاركين حسب الاسم
+    return render_template('home.html', participants=participants_sorted, total_amount=total_amount)
 
 @app.route('/register', methods=['POST'])
 @login_required
@@ -58,23 +58,25 @@ def register():
     ticket_number = request.form['ticket_number']
     name = request.form['name']
     national_id = request.form['national_id']
+    amount = request.form['amount']
 
     # التحقق من عدم وجود تكرار في رقم التذكرة
     if any(p['ticket_number'] == ticket_number for p in participants):
         flash('رقم التذكرة موجود بالفعل!')
         return redirect(url_for('home'))
 
-    # إضافة البيانات إلى Google Sheets
-    registration_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    sheet.append_row([name, national_id, ticket_number, registration_datetime, current_user.username])
-
+    # إضافة المشارك إلى القاعدة
     participants.append({
         'ticket_number': ticket_number,
         'name': name,
         'national_id': national_id,
+        'amount': amount,
         'added_by': current_user.username,
-        'registration_datetime': registration_datetime
+        'registration_date': datetime.now().strftime('%Y-%m-%d %H:%M:%S')  # إضافة تاريخ ووقت التسجيل
     })
+
+    # إضافة البيانات إلى Google Sheets
+    sheet.append_row([name, national_id, ticket_number, amount, current_user.username, datetime.now().strftime('%Y-%m-%d %H:%M:%S')])
 
     flash('تم التسجيل بنجاح!')
     return redirect(url_for('home'))
@@ -97,12 +99,7 @@ def update(ticket_number):
     if request.method == 'POST':
         participant['name'] = request.form['name']
         participant['national_id'] = request.form['national_id']
-        
-        # تحديث البيانات في Google Sheets
-        cell = sheet.find(ticket_number)
-        sheet.update_cell(cell.row, 2, participant['name'])
-        sheet.update_cell(cell.row, 3, participant['national_id'])
-        
+        participant['amount'] = request.form['amount']
         flash('تم التعديل بنجاح!')
         return redirect(url_for('home'))
 
