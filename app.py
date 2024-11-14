@@ -18,7 +18,7 @@ scopes = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapi
 creds = Credentials.from_service_account_file("chakir-441715-e791e6fcbd91.json", scopes=scopes)
 client = gspread.authorize(creds)
 
-# فتح ملف Google Sheets
+# فتح ملف Google Sheets وورقة العمل "chakir event"
 spreadsheet = client.open_by_url("https://docs.google.com/spreadsheets/d/14MBgYNZgGSZasniSdGrbAsaqO9DR012Qab9ZOKeFEBE/edit?gid=0")
 sheet = spreadsheet.worksheet("chakir event")
 
@@ -51,8 +51,8 @@ def load_user(user_id):
 @app.route('/')
 @login_required
 def home():
-    total_amount = len(participants) * 300  # حساب إجمالي المبلغ
-    participants_sorted = sorted(participants, key=lambda p: p['name'])  # ترتيب المشاركين حسب الاسم
+    total_amount = sum(300 for p in participants)  # حساب إجمالي المبلغ (300 درهم لكل مشارك)
+    participants_sorted = sorted(participants, key=lambda p: p['ticket_number'])  # ترتيب المشاركين حسب رقم التذكرة
     return render_template('home.html', participants=participants_sorted, total_amount=total_amount)
 
 @app.route('/register', methods=['POST'])
@@ -61,7 +61,7 @@ def register():
     ticket_number = request.form['ticket_number']
     name = request.form['name']
     id_card_number = request.form['id_card_number']
-    amount = 300  # المبلغ الكلي ثابت لكل مشارك
+    amount = 300  # المبلغ ثابت وهو 300 درهم لكل مشارك
 
     # التحقق من عدم وجود تكرار في رقم التذكرة
     if any(p['ticket_number'] == ticket_number for p in participants):
@@ -74,8 +74,8 @@ def register():
         'name': name,
         'id_card_number': id_card_number,
         'added_by': current_user.username,
-        'registration_date': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-        'amount': amount  # إضافة المبلغ الكلي للمشارك
+        'registration_date': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),  # إضافة تاريخ ووقت التسجيل
+        'amount': amount
     })
 
     # إضافة البيانات إلى Google Sheets
@@ -102,6 +102,7 @@ def update(ticket_number):
     if request.method == 'POST':
         participant['name'] = request.form['name']
         participant['id_card_number'] = request.form['id_card_number']
+        participant['amount'] = request.form['amount']
         flash('تم التعديل بنجاح!')
         return redirect(url_for('home'))
 
