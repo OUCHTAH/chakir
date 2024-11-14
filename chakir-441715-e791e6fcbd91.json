@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "chakir-441715",
+  "private_key_id": "e791e6fcbd91265697fc925346de0e9b25b2aee0",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCrFAwZnXmi099t\nl4pGmRsGNNJP+Q61Mclemw2rNxuwKaDUmrsfemb3Z3LOlV81sjTHnsYrxSBQNT+3\nAT5Cog5P5Q9alTWXKA3NTy4ThhN4vpv0aGi+xqwebQ1+juWvbWISmUYlAA7rAYec\nuNihy/Yf15YB9ZqPSjpMD0k34qBTwxXGAoMl0nKGscuj1ItS6RvJI+Ptjnraj5TS\nNlFPmialUTQTWK9XsDBdgsr51h5pv1w61QjmXzvNd9/IwvDiOjaUA1XdkA5R6lq0\ntjiztdyNSiO8qxeKZKSV4Mjf4xYZPIyRB9ig4DF7h5M30lRnwZ6tmnmkUidt0Pdu\nbrEE1VSBAgMBAAECggEAIndt/qUi0eK0s1wiABotfyEaNAF97JRkuPotFU8LdYDV\nha/MvklHQFXno+YlIejOyF7dFwlmerJXrVODSyJiFseTwdCo1NS9fx0SL93Fw4BH\nZES6waC+IX0gCFzaum6joRKfNqod10veGf2Fq4cvhXfGIYvtQSwXtaYovqkaWvVw\n8Dpc+JFQ66CwwF6DXfTAI67rqGP+XwQoU6TQ+AD/+SNad+AS01HHHvYKAaFXYwlU\n+H4osN2+cqtqXHalT2Mm/4/gWxwuKJkq9VW4Vi9H6vnZyHQ50S1Cp554UyQ945fo\nUyU101Er3QqAL6wg9ZBDj0GLzqQdAO380dboRLqy5wKBgQDVpUVCjjgZN/ohO7ec\n47zPPeoBmB6PPYCGivaix9CD+gJJCr4eeS9zEMr8fNZypFoh1405m7D80O45R+vU\n/UEA8nRKDct4ZK8jE8LK90ESbBsu1MUEGTMQ0mGDKNr2PbRYrA3eMdEdn8wF3gOb\ngD8BbT+D9LVoULWTBEvrp9oGCwKBgQDM/nG/nAwOAKL4b42dT+gE/aNkLyaskhWN\n11B/1gMplV0PZw403JdRoQlqKFwgSlmQyaaeDapVRowhrsMzeHb8ojD7pD/B6hp3\n8PmF6nQvwENoJZ9v8rCgJU+shZvACpK9+v3lNlZHiPljaNPlg6TVRmIX87oHz6ib\nELXVOHkjIwKBgQDMbTDBh34MO3C+nfqKR6uhjbe8wMb0/r9dfdiTV6igr/fB1mKm\nnASYEIh6YiV8WuDXov5CEkSfFHfuHXB+Q7oQYu588Ygw8f5XDRCFz2LXctPr0rGV\nw1sGjJe7vbsOhWpssm0un/Jda0r4jkBbabJf9h4hcGSopRmozCKtIdZPkwKBgQCn\n7mnQxk05y1u2mewxSxyPuhj4IYhVJvdxU0om73N3xVyPGaWRuIRd4saLqLSP31iw\nPAG6yQcZBMoXbcuLhswy+cuW2l9AxD8astY21nKIC8EsuGV8mBwJlYdHlcyZ7g94\ngv0roO/demCTB3VPOCD4dsg1RvzHGV7OaUoMek8CcQKBgDOJei1CsxQCPtE4Ct+4\ndf7p0E9f1a4/U83SBNlDnzPW08qGVlTe7RJJ1XYtOq+AxP9WywRM1AuU1hICcpBO\n3Gpn/3TAXKKUkGZ4cI8Km4YPPq2wD730fF0Vjq58KUyC+jxqCQF3hoRAOY1f43tl\nqLCQKoTi7XSg2VDXpoeTMDbu\n-----END PRIVATE KEY-----\n",
+  "client_email": "chakir-liste@chakir-441715.iam.gserviceaccount.com",
+  "client_id": "103011311704573343228",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/chakir-liste%40chakir-441715.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
