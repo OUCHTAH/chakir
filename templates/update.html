@@ -3,19 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تعديل المشارك</title>
+    <title>تحديث المشارك</title>
+    <!-- رابط إلى Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- إعداد اتجاه النص من اليمين لليسار -->
+    <style>
+        body {
+            direction: rtl;
+            text-align: right;
+        }
+        .container {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>تعديل المشارك</h1>
-    <form action="{{ url_for('update', ticket_number=participant['ticket_number']) }}" method="POST">
-        <label>اسم:</label>
-        <input type="text" name="name" value="{{ participant.name }}" required><br>
-        <label>رقم الهوية الوطنية:</label>
-        <input type="text" name="national_id" value="{{ participant.national_id }}" required><br>
-        <label>المبلغ المدفوع:</label>
-        <input type="number" name="amount" value="{{ participant.amount }}" required><br>
-        <button type="submit">تحديث</button>
-    </form>
-    <a href="{{ url_for('home') }}">عودة إلى الصفحة الرئيسية</a>
+    <div class="container">
+        <h1 class="text-center">تحديث بيانات المشارك</h1>
+        <form method="POST">
+            <div class="form-group">
+                <label for="name">الاسم</label>
+                <input type="text" class="form-control" id="name" name="name" value="{{ participant['name'] }}" required>
+            </div>
+            <div class="form-group">
+                <label for="national_id">الرقم الوطني</label>
+                <input type="text" class="form-control" id="national_id" name="national_id" value="{{ participant['national_id'] }}" required>
+            </div>
+            <div class="form-group">
+                <label for="ticket_number">رقم التذكرة</label>
+                <input type="text" class="form-control" id="ticket_number" name="ticket_number" value="{{ participant['ticket_number'] }}" required>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-success btn-block">تحديث</button>
+            </div>
+        </form>
+        <div class="text-center">
+            <a href="{{ url_for('home') }}" class="btn btn-secondary">الرجوع إلى الصفحة الرئيسية</a>
+        </div>
+    </div>
+
+    <!-- رابط إلى Bootstrap JS و jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
