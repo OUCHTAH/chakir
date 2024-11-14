@@ -1,30 +1,21 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تعديل المشارك</title>
-    <style>
-        /* يمكنك إضافة التنسيق الذي تفضله هنا */
-    </style>
 </head>
 <body>
     <h1>تعديل المشارك</h1>
     <form action="{{ url_for('update', ticket_number=participant['ticket_number']) }}" method="POST">
-        <label for="name">الاسم الكامل:</label>
-        <input type="text" id="name" name="name" value="{{ participant['name'] }}" required><br><br>
-
-        <label for="national_id">رقم البطاقة الوطنية:</label>
-        <input type="text" id="national_id" name="national_id" value="{{ participant['national_id'] }}" required><br><br>
-
-        <label for="amount">المبلغ المدفوع (بالدرهم):</label>
-        <select id="amount" name="amount" required>
-            <option value="100" {% if participant['amount'] == '100' %}selected{% endif %}>100 درهم</option>
-            <option value="200" {% if participant['amount'] == '200' %}selected{% endif %}>200 درهم</option>
-            <option value="300" {% if participant['amount'] == '300' %}selected{% endif %}>300 درهم</option>
-        </select><br><br>
-
-        <input type="submit" value="تعديل">
+        <label>اسم:</label>
+        <input type="text" name="name" value="{{ participant.name }}" required><br>
+        <label>رقم الهوية الوطنية:</label>
+        <input type="text" name="national_id" value="{{ participant.national_id }}" required><br>
+        <label>المبلغ المدفوع:</label>
+        <input type="number" name="amount" value="{{ participant.amount }}" required><br>
+        <button type="submit">تحديث</button>
     </form>
+    <a href="{{ url_for('home') }}">عودة إلى الصفحة الرئيسية</a>
 </body>
 </html>
