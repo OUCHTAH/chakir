@@ -3,84 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الصفحة الرئيسية</title>
-    <!-- رابط إلى Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <!-- إعداد اتجاه النص من اليمين لليسار -->
+    <title>Chakir Event</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
+            font-family: Arial, sans-serif;
             direction: rtl;
+            background-color: #f7f7f7;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header, .table-container {
+            margin-bottom: 20px;
+        }
+
+        .table-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .total-amount {
+            background-color: #3498db;
+            color: white;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 18px;
             text-align: right;
         }
-        .container {
-            margin-top: 20px;
-        }
+
         table {
+            width: 100%;
+            border-collapse: collapse;
             margin-top: 20px;
         }
-        .form-container {
-            margin-top: 20px;
+
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .form-group button {
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .form-group button:hover {
+            background-color: #2980b9;
+        }
+
+        .flash {
+            color: green;
+            text-align: center;
+            margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="text-center">قائمة المشاركين</h1>
-        
-        <!-- نموذج إضافة مشارك جديد -->
-        <div class="form-container">
+        <div class="header">
+            <div class="total-amount">
+                <strong>المبلغ الكلي: </strong> {{ total_amount }} درهم
+            </div>
+            <h2>إضافة مشارك جديد</h2>
             <form method="POST" action="{{ url_for('register') }}">
                 <div class="form-group">
-                    <label for="name">الاسم</label>
-                    <input type="text" class="form-control" id="name" name="name" required>
+                    <label for="ticket_number">رقم التذكرة</label>
+                    <input type="text" id="ticket_number" name="ticket_number" required>
                 </div>
                 <div class="form-group">
-                    <label for="ticket_number">رقم التذكرة</label>
-                    <input type="text" class="form-control" id="ticket_number" name="ticket_number" required>
+                    <label for="name">اسم المشارك</label>
+                    <input type="text" id="name" name="name" required>
                 </div>
                 <div class="form-group">
                     <label for="id_card_number">رقم البطاقة</label>
-                    <input type="text" class="form-control" id="id_card_number" name="id_card_number" required>
+                    <input type="text" id="id_card_number" name="id_card_number" required>
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary btn-block">إضافة</button>
+                    <button type="submit">إضافة</button>
                 </div>
             </form>
         </div>
-        
-        <!-- عرض قائمة المشاركين في جدول -->
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>رقم المشارك</th>
-                    <th>اسم المشارك</th>
-                    <th>رقم التذكرة</th>
-                    <th>رقم البطاقة</th>
-                    <th>تم التسجيل بواسطة</th>
-                    <th>تاريخ التسجيل</th>
-                    <th>المبلغ الكلي (بالدرهم)</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for participant in participants %}
+
+        <div class="table-container">
+            <h3>قائمة المشاركين</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>الرقم</th>
+                        <th>رقم التذكرة</th>
+                        <th>الاسم الكامل</th>
+                        <th>تم التسجيل بواسطة</th>
+                        <th>التاريخ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in participants %}
                     <tr>
                         <td>{{ loop.index }}</td>
-                        <td>{{ participant['name'] }}</td>
-                        <td>{{ participant['ticket_number'] }}</td>
-                        <td>{{ participant['id_card_number'] }}</td>
-                        <td>{{ participant['added_by'] }}</td>
-                        <td>{{ participant['registration_date'] }}</td>
-                        <td>{{ 300 }}</td> <!-- المبلغ الثابت لكل مشارك -->
+                        <td>{{ p.ticket_number }}</td>
+                        <td>{{ p.name }}</td>
+                        <td>{{ p.added_by }}</td>
+                        <td>{{ p.registration_date }}</td>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-
-    <!-- رابط إلى Bootstrap JS و jQuery -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
